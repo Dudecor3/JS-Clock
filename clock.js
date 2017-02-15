@@ -1,52 +1,50 @@
-function selectDiv(div_id) {
-    var element = document.querySelector(div_id);
-    console.log(element);
-    return element;
-}
+(function () {
+    function select_div(div_id) {
+        return document.querySelector(div_id);
+    }
 
-function getDegrees(hand_name) {
-    if (hand_name === 'seconds') {
-        return ((seconds / 60) * 360) + 90;
-    } else if (hand_name === 'minutes') {
-        return ((minutes / 60) * 360) + ((seconds / 60) * 6) + 90;
-    } else if (hand_name === 'hours') {
-        return ((hours / 12) * 360) + ((minutes / 60) * 30) + 90;
-    } else {
+    function get_time(now) {
+        return {
+            "hours": now.getHours(),
+            "minutes": now.getMinutes(),
+            "seconds": now.getSeconds()
+        };
+    }
+
+    function get_degrees(hand_name, time) {
+        if (hand_name === 'seconds') {
+            return ((time.seconds / 60) * 360) + 90;
+        }
+
+        if (hand_name === 'minutes') {
+            return ((time.minutes / 60) * 360) + ((time.seconds / 60) * 6) + 90;
+        }
+
+        if (hand_name === 'hours') {
+            return ((time.hours / 12) * 360) + ((time.minutes / 60) * 30) + 90;
+        }
+
         return false;
     }
-}
 
-function transformClockHands(clock_hand_name) {
-    if (clock_hand_name === hoursHand) {
-        hoursHand.style.transform = "rotate(" + hoursDegrees + "deg)";
-    } else if (clock_hand_name === minutesHand) {
-        minutesHand.style.transform = "rotate(" + minutesDegrees + "deg)";
-    } else if (clock_hand_name === secondsHand) {
-        secondsHand.style.transform = "rotate(" + secondsDegrees + "deg)";
-    } else {
-        return false;
+    function rotate_clock_hand(hand_to_rotate, degrees) {
+        hand_to_rotate.style.transform = "rotate(" + degrees + "deg)";
     }
-}
 
+    const hours_hand = select_div('.hours-hand');
+    const minutes_hand = select_div('.minutes-hand');
+    const seconds_hand = select_div('.seconds-hand');
 
-var now = new Date();
-var hours = now.getHours();
-var minutes = now.getMinutes();
-var seconds = now.getSeconds();
+    function show_time() {
+        const time = get_time(new Date());
+        const hours_degrees = get_degrees('hours', time);
+        const minutes_degrees = get_degrees('minutes', time);
+        const seconds_degrees = get_degrees('seconds', time);
 
-var hoursHand = selectDiv('.hours-hand');
-var minutesHand = selectDiv('.minutes-hand');
-var secondsHand = selectDiv('.seconds-hand');
+        rotate_clock_hand(hours_hand, hours_degrees);
+        rotate_clock_hand(minutes_hand, minutes_degrees);
+        rotate_clock_hand(seconds_hand, seconds_degrees);
+    }
 
-var hoursDegrees = getDegrees('hours');
-var minutesDegrees = getDegrees('minutes');
-var secondsDegrees = getDegrees('seconds');
-
-transformClockHands(hoursHand);
-transformClockHands(minutesHand);
-transformClockHands(secondsHand);
-
-
-
-
-
+    setInterval(show_time, 1000);
+})();
